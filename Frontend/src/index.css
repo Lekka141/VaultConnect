@@ -1,0 +1,291 @@
+/* Base styles for the entire document */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background-color: #F4F8FB; /* Light calming blue */
+  color: #2C3E50; /* Deep calm grey for text */
+  line-height: 1.6;
+}
+
+/* Container for overall app layout */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #FFFFFF; /* Pure white for contrast and clarity */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+  border-radius: 12px;
+  transition: all 0.3s ease; /* Smooth transitions */
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  color: #34495E; /* Darker calming grey */
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+h1 {
+  font-size: 2.8rem;
+}
+
+h2 {
+  font-size: 2.2rem;
+}
+
+h3 {
+  font-size: 1.8rem;
+}
+
+/* Links */
+a {
+  color: #5DADE2; /* Light blue for links */
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #2980B9; /* Slightly darker blue for hover state */
+}
+
+/* Buttons */
+button, .btn {
+  background-color: #82E0AA; /* Soft green for positive actions */
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover, .btn:hover {
+  background-color: #58D68D; /* Darker green on hover */
+}
+
+button:disabled, .btn:disabled {
+  background-color: #BDC3C7; /* Disabled button state */
+  cursor: not-allowed;
+}
+
+/* Input fields */
+input, textarea, select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #D5DBDB; /* Light grey border */
+  border-radius: 6px;
+  background-color: #FBFCFC; /* Off-white background */
+  font-size: 1rem;
+  color: #2C3E50; /* Dark grey text */
+  transition: border-color 0.3s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: #5DADE2; /* Soft blue focus outline */
+  outline: none;
+}
+
+/* Cards */
+.card {
+  background-color: #FFFFFF;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px); /* Slight lift on hover */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* Deeper shadow on hover */
+}
+
+.card-header {
+  background-color: #A9DFBF; /* Very light green header */
+  padding: 15px;
+  border-bottom: 1px solid #EAEDED;
+  font-size: 1.25rem;
+  color: #2C3E50;
+  border-radius: 10px 10px 0 0;
+}
+
+.card-content {
+  padding: 15px;
+}
+
+/* Navigation bar */
+.navbar {
+  background-color: #2E86C1; /* Calm soft blue */
+  padding: 15px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar a {
+  color: white;
+  padding: 10px 20px;
+  text-decoration: none;
+  font-size: 1.2rem;
+  display: inline-block;
+  transition: background-color 0.3s ease;
+}
+
+.navbar a:hover {
+  background-color: #21618C; /* Slightly darker on hover */
+  border-radius: 5px;
+}
+
+/* Logo in the navbar */
+.navbar-logo {
+  height: 40px;
+  margin-right: 20px;
+}
+
+/* Footer */
+footer {
+  background-color: #F3F7FA; /* Same light blue as the body background */
+  text-align: center;
+  padding: 20px;
+  color: #566573; /* Grey tone */
+}
+
+footer a {
+  color: #5DADE2;
+  transition: color 0.3s ease;
+}
+
+footer a:hover {
+  color: #2980B9;
+}
+
+/* Forms */
+form {
+  background-color: #ECF0F1; /* Light grey background for forms */
+  padding: 20px;
+  border-radius: 10px;
+}
+
+label {
+  font-size: 1rem;
+  color: #34495E;
+}
+
+input[type="submit"], button[type="submit"] {
+  background-color: #5DADE2;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+input[type="submit"]:hover, button[type="submit"]:hover {
+  background-color: #2980B9;
+}
+
+/* Modals */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 50%;
+  margin: 10% auto;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header, .modal-footer {
+  padding: 15px;
+  background-color: #82E0AA; /* Light green for headers and footers */
+}
+
+.modal-header h2 {
+  margin: 0;
+}
+
+.modal-footer {
+  text-align: right;
+}
+
+/* Utility classes */
+.text-center {
+  text-align: center;
+}
+
+.mt-20 {
+  margin-top: 20px;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
+.pt-10 {
+  padding-top: 10px;
+}
+
+.pb-10 {
+  padding-bottom: 10px;
+}
+
+.px-10 {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+    margin: 0 10px;
+  }
+
+  .navbar a {
+    font-size: 1rem;
+    padding: 8px 15px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.8rem;
+  }
+}
+
+/* Logo Implementation */
+/* Adding the logo to the navbar */
+.navbar img {
+  content: url('/VaultConnect/Images/Logo.png');
+  height: 40px; /* Adjust height as needed */
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Position the logo to the left side of the navigation bar */
+.navbar .logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.navbar .logo-container img {
+  height: 50px;
+  margin-right: 10px;
+}
