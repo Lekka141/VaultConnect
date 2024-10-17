@@ -1,0 +1,55 @@
+/* Reset all elements' margins, paddings, and box-sizing */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Remove default list styles */
+  ul, ol {
+    list-style: none;
+  }
+  
+  /* Remove default link styles */
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  /* Reset button and input styles */
+  button, input, textarea, select {
+    font-family: inherit;
+    font-size: inherit;
+    margin: 0;
+  }
+  
+  /* Reset tables */
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+  
+  /* Ensure media elements have responsive layout */
+  img, video {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Basic reset for form elements */
+  input, button, textarea, select {
+    border: none;
+    background-color: transparent;
+  }
+  
+  /* Remove default styling from headings */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: normal;
+    line-height: 1.2;
+  }
+  
+  /* Reset blockquote styles */
+  blockquote {
+    margin: 0;
+    padding: 0;
+  }
+  
