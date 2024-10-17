@@ -10,19 +10,15 @@ import { brand, gray, green, orange, red } from './themeColors';
 const getSignUpTheme = (mode) => {
   const isDarkMode = mode === 'dark';
 
+  /** Simplified palette structure for better maintainability */
   return {
     palette: {
       mode,
       primary: {
-        light: brand[200],
-        main: brand[500],
+        light: isDarkMode ? brand[300] : brand[200],
+        main: isDarkMode ? brand[400] : brand[500],
         dark: brand[800],
         contrastText: isDarkMode ? brand[100] : brand[50],
-        ...(isDarkMode && {
-          light: brand[300],
-          main: brand[400],
-          dark: brand[800],
-        }),
       },
       secondary: {
         light: green[200],
@@ -50,11 +46,11 @@ const getSignUpTheme = (mode) => {
       },
       divider: alpha(isDarkMode ? gray[600] : gray[300], isDarkMode ? 0.3 : 0.5),
       background: {
-        default: isDarkMode ? 'hsl(220, 30%, 3%)' : 'hsl(0, 0%, 100%)',
+        default: isDarkMode ? 'hsl(220, 30%, 10%)' : 'hsl(0, 0%, 100%)', /** Adjusted dark background for better contrast */
         paper: isDarkMode ? gray[900] : gray[100],
       },
       text: {
-        primary: isDarkMode ? 'hsl(0, 0%, 100%)' : gray[800],
+        primary: isDarkMode ? 'hsl(0, 0%, 95%)' : gray[800], /** Adjusted primary text color for better contrast in dark mode */
         secondary: isDarkMode ? gray[400] : gray[600],
       },
     },

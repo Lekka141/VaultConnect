@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Typography, Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import API from '../../utils/API'; /* Assuming an API utility for backend interaction */
+import API from '../../utils/API'; /** Assuming an API utility for backend interaction */
 
 /**
  * SignUp component handles user registration functionality.
@@ -12,11 +12,12 @@ function SignUp() {
   /** State variables for storing user input */
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState(''); /** New state for password confirmation */
   const [name, setName] = useState('');
   const [error, setError] = useState('');
-  
+
   /** Hook to navigate the user to different routes */
-  const history = useNavigate();
+  const navigate = useNavigate();
 
   /**
    * Handles the registration form submission.
@@ -26,6 +27,23 @@ function SignUp() {
    */
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(''); /** Clear any previous error */
+
+    /** Basic client-side validation */
+    if (!email.includes('@') || !email.includes('.')) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
 
     try {
       /** Call the backend API for sign up with the user's name, email, and password */
@@ -33,7 +51,7 @@ function SignUp() {
 
       if (response.data.success) {
         /** Navigate to the sign-in page upon successful registration */
-        history('/signin');
+        navigate('/signin');
       } else {
         /** Set an error message if registration was not successful */
         setError(response.data.message);
@@ -71,6 +89,7 @@ function SignUp() {
             autoFocus
             value={name}
             onChange={(e) => setName(e.target.value)}
+            aria-label="Full Name" /** Added aria-label for accessibility */
           />
           {/** Email input field */}
           <TextField
@@ -84,6 +103,7 @@ function SignUp() {
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            aria-label="Email Address" /** Added aria-label for accessibility */
           />
           {/** Password input field */}
           <TextField
@@ -98,10 +118,25 @@ function SignUp() {
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            aria-label="Password" /** Added aria-label for accessibility */
+          />
+          {/** Confirm Password input field */}
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="confirmPassword"
+            label="Confirm Password"
+            type="password"
+            id="confirm-password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            aria-label="Confirm Password" /** Added aria-label for accessibility */
           />
           {/** Display error message if registration fails */}
           {error && (
-            <Typography color="error" variant="body2">
+            <Typography color="error" variant="body2" sx={{ mt: 1 }}>
               {error}
             </Typography>
           )}

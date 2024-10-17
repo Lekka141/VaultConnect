@@ -1,37 +1,70 @@
 import React, { useState } from 'react';
 import { Box, Typography, TextField, Button, CircularProgress } from '@mui/material';
-import { useAuth } from './AuthContext'; // Importing AuthContext for authentication
+import { useAuth } from './AuthContext'; /** Importing AuthContext for authentication */
+import GoogleIcon from '@mui/icons-material/Google';
+import { useNavigate } from 'react-router-dom';
 
+/**
+ * SignIn component for user authentication using email/password or Google authentication.
+ *
+ * This component allows users to sign in using their credentials or Google OAuth.
+ * The authentication logic is handled through the AuthContext.
+ *
+ * @returns {JSX.Element} - The rendered sign-in form
+ */
 const SignIn = () => {
-  // State to hold email, password, error messages, and loading state
+  /** State variables to manage email, password, error messages, and loading state. */
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signIn } = useAuth(); // Using the signIn function from AuthContext
 
-  // Handle form submission for sign-in
-  const handleSubmit = (e) => {
+  /** Using signIn and signInWithGoogle functions from AuthContext */
+  const { login, signInWithGoogle } = useAuth();
+  const navigate = useNavigate(); /** Hook to navigate to different routes */
+
+  /**
+   * Handles form submission for sign-in with email and password.
+   *
+   * @param {object} e - The form submission event
+   */
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(''); // Clear any previous errors
+    setError(''); /** Clear any previous errors */
 
-    // Basic email validation
+    /** Basic email validation to ensure the user provides a valid email address. */
     if (!email.includes('@') || !email.includes('.')) {
       setError('Please enter a valid email address.');
       setLoading(false);
       return;
     }
 
-    signIn(email, password)
-      .then(() => {
-        setLoading(false);
-        // Navigate to dashboard handled by the authentication state change
-      })
-      .catch(() => {
-        setError('Invalid email or password. Please try again.');
-        setLoading(false);
-      });
+    try {
+      await login(email, password);
+      setLoading(false);
+      navigate('/dashboard'); /** Redirects to the dashboard upon successful sign-in */
+    } catch (err) {
+      setError('Invalid email or password. Please try again.');
+      setLoading(false);
+    }
+  };
+
+  /**
+   * Handles sign-in with Google OAuth.
+   */
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setError(''); /** Clear any previous errors */
+
+    try {
+      await signInWithGoogle();
+      setLoading(false);
+      navigate('/dashboard'); /** Redirects to the dashboard upon successful Google sign-in */
+    } catch (err) {
+      setError('Google sign-in failed. Please check your connection and try again.');
+      setLoading(false);
+    }
   };
 
   return (
@@ -46,19 +79,23 @@ const SignIn = () => {
         padding: 3,
       }}
     >
-      {/* VaultConnect Logo and Name */}
-      <img src="/path/to/logo.png" alt="VaultConnect Logo" style={{ height: '80px', marginBottom: '16px' }} />
+      {/** VaultConnect Logo and Name */}
+      <img
+        src="/Images/Logo.png" /** Updated the path to be relative to the public directory */
+        alt="VaultConnect Logo"
+        style={{ height: '80px', marginBottom: '16px' }}
+      />
       <Typography variant="h4" gutterBottom>
         VaultConnect
       </Typography>
 
-      {/* Sign-In Form */}
+      {/** Sign-In Form */}
       <Box
         component="form"
         onSubmit={handleSubmit}
         sx={{
           width: '100%',
-          maxWidth: { xs: '90%', sm: '400px' }, // Responsive width for different screen sizes
+          maxWidth: { xs: '90%', sm: '400px' }, /** Responsive width for different screen sizes */
           mt: 3,
           display: 'flex',
           flexDirection: 'column',
@@ -96,9 +133,19 @@ const SignIn = () => {
           variant="contained"
           color="primary"
           sx={{ mt: 2 }}
-          disabled={loading} // Disable button while loading
+          disabled={loading} /** Disable button while loading */
         >
           {loading ? <CircularProgress size={24} /> : 'Sign In'}
+        </Button>
+        <Button
+          variant="outlined"
+          color="primary"
+          startIcon={<GoogleIcon />}
+          onClick={handleGoogleSignIn}
+          sx={{ mt: 2 }}
+          disabled={loading}
+        >
+          {loading ? <CircularProgress size={24} /> : 'Sign In with Google'}
         </Button>
       </Box>
     </Box>

@@ -1,102 +1,105 @@
-import React, { useState } from 'react';
-import { Card, CardContent, Typography, TextField, Button, List, ListItem, ListItemText, IconButton, Checkbox } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, Typography, TextField, Button, List, ListItem, ListItemText, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 /**
- * ToDoWidget component for managing a to-do list.
- * Users can add tasks, mark them as completed, and delete tasks.
- * @returns {JSX.Element} - Rendered ToDoWidget component.
+ * ToDoWidget component allows users to create, view, and delete to-do items.
+ *
+ * @returns {JSX.Element} - The rendered to-do list widget
  */
-function ToDoWidget() {
-  /**
-   * State to store the list of tasks.
-   * Each task object has the properties 'text' and 'completed'.
-   */
-  const [tasks, setTasks] = useState([]);
-  const [newTask, setNewTask] = useState('');
+const ToDoWidget = () => {
+  /** State for managing the to-do items */
+  const [todos, setTodos] = useState([]);
+  const [newTodo, setNewTodo] = useState('');
+
+  /** Load to-do items from localStorage on component mount */
+  useEffect(() => {
+    const savedTodos = localStorage.getItem('todos');
+    if (savedTodos) {
+      setTodos(JSON.parse(savedTodos));
+    }
+  }, []);
+
+  /** Save to-do items to localStorage whenever the todos state changes */
+  useEffect(() => {
+    localStorage.setItem('todos', JSON.stringify(todos));
+  }, [todos]);
 
   /**
-   * Handle adding a new task to the list.
-   * Checks if the new task is not empty before adding it.
+   * Handles the addition of a new to-do item
+   * Adds the item to the to-do list if it's not empty
    */
-  const handleAddTask = () => {
-    if (newTask.trim() !== '') {
-      setTasks([...tasks, { text: newTask, completed: false }]);
-      setNewTask(''); /** Clear the input field after adding the task */
+  const handleAddTodo = () => {
+    if (newTodo.trim() !== '') {
+      setTodos([...todos, newTodo.trim()]);
+      setNewTodo('');
     }
   };
 
   /**
-   * Handle toggling the completion status of a task.
-   * Updates the 'completed' property of the specified task.
-   *
-   * @param {number} index - The index of the task to be toggled.
+   * Handles the deletion of a to-do item
+   * @param {number} index - The index of the item to delete
    */
-  const handleToggleTask = (index) => {
-    const updatedTasks = [...tasks];
-    updatedTasks[index].completed = !updatedTasks[index].completed;
-    setTasks(updatedTasks);
+  const handleDeleteTodo = (index) => {
+    setTodos(todos.filter((_, i) => i !== index));
   };
 
   /**
-   * Handle deleting a task from the list.
-   * Removes the task at the specified index.
-   *
-   * @param {number} index - The index of the task to be deleted.
+   * Handles key press events to add a new to-do when the Enter key is pressed
+   * @param {object} event - The keyboard event object
    */
-  const handleDeleteTask = (index) => {
-    const updatedTasks = tasks.filter((_, i) => i !== index);
-    setTasks(updatedTasks);
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      handleAddTodo();
+    }
   };
 
   return (
-    <Card sx={{ maxWidth: 400, margin: 'auto' }}>
+    <Card sx={{ minWidth: 275 }}>
       <CardContent>
         <Typography variant="h5" gutterBottom>
           To-Do List
         </Typography>
-        {/* Input field for adding a new task */}
         <TextField
-          label="New Task"
+          label="New To-Do"
           variant="outlined"
-          size="small"
-          value={newTask}
-          onChange={(e) => setNewTask(e.target.value)}
-          sx={{ marginBottom: 2, width: '100%' }}
+          fullWidth
+          value={newTodo}
+          onChange={(e) => setNewTodo(e.target.value)}
+          onKeyPress={handleKeyPress} /** Add keypress handler for Enter key */
+          sx={{ mb: 2 }}
+          aria-label="New to-do input" /** Added aria-label for accessibility */
         />
-        {/* Button to add a new task */}
         <Button
           variant="contained"
           color="primary"
-          onClick={handleAddTask}
-          sx={{ width: '100%' }}
+          onClick={handleAddTodo}
+          disabled={newTodo.trim() === ''}
+          aria-label="Add new to-do" /** Added aria-label for accessibility */
         >
-          Add Task
+          Add To-Do
         </Button>
-
-        {/* Display the list of tasks */}
-        <List sx={{ marginTop: 2 }}>
-          {tasks.map((task, index) => (
-            <ListItem key={index} secondaryAction={
-              <IconButton edge="end" onClick={() => handleDeleteTask(index)}>
-                <DeleteIcon />
-              </IconButton>
-            }>
-              {/* Checkbox to mark task as completed */}
-              <Checkbox
-                checked={task.completed}
-                onChange={() => handleToggleTask(index)}
-              />
-              <ListItemText
-                primary={task.text}
-                sx={{ textDecoration: task.completed ? 'line-through' : 'none' }}
-              />
+        <List sx={{ mt: 2 }}>
+          {todos.map((todo, index) => (
+            <ListItem
+              key={index}
+              secondaryAction={
+                <IconButton
+                  edge="end"
+                  aria-label={`Delete ${todo}`}
+                  onClick={() => handleDeleteTodo(index)}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              }
+            >
+              <ListItemText primary={todo} />
             </ListItem>
           ))}
         </List>
       </CardContent>
     </Card>
   );
-}
+};
 
 export default ToDoWidget;

@@ -30,7 +30,7 @@ API.interceptors.request.use(
 
 /**
  * Add response interceptor to handle global error responses.
- * Redirects to login page if the response indicates unauthorized access (401).
+ * Redirects to sign-in page if the response indicates unauthorized access (401).
  *
  * Response interceptors are useful for:
  * - Handling common HTTP errors globally (e.g., 401 Unauthorized, 500 Server Error).
@@ -42,7 +42,9 @@ API.interceptors.response.use(
     if (error.response) {
       switch (error.response.status) {
         case 401:
-          window.location.href = '/login'; /** Redirect to login if unauthorized */
+          console.warn('Authentication expired. Redirecting to sign-in.'); /** Warn user about expired session */
+          localStorage.removeItem('authToken'); /** Remove token to clear session */
+          window.location.href = '/signin'; /** Redirect to sign-in if unauthorized */
           break;
         case 403:
           console.error('Access denied. You do not have permission to access this resource.');
@@ -78,7 +80,7 @@ export const login = async (email, password) => {
     }
     return response.data;
   } catch (error) {
-    console.error('Login failed:', error);
+    console.error('Login failed:', error.message || error);
     throw error; /** Throw the error for the caller to handle */
   }
 };
@@ -96,7 +98,7 @@ export const get = async (endpoint, params = {}) => {
     const response = await API.get(endpoint, { params });
     return response.data;
   } catch (error) {
-    console.error(`GET request to ${endpoint} failed:`, error);
+    console.error(`GET request to ${endpoint} failed:`, error.message || error);
     throw error; /** Throw the error for the caller to handle */
   }
 };
@@ -114,7 +116,7 @@ export const post = async (endpoint, data) => {
     const response = await API.post(endpoint, data);
     return response.data;
   } catch (error) {
-    console.error(`POST request to ${endpoint} failed:`, error);
+    console.error(`POST request to ${endpoint} failed:`, error.message || error);
     throw error; /** Throw the error for the caller to handle */
   }
 };

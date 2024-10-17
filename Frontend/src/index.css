@@ -2,9 +2,9 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
-  background-color: #F4F8FB; /* Light calming blue */
-  color: #2C3E50; /* Deep calm grey for text */
+  font-family: 'Roboto', Arial, sans-serif; /* Clean, modern font */
+  background-color: #f0f4f8; /* Light blue-grey background for a calming visual */
+  color: #2a2a2a; /* Dark grey text for high contrast */
   line-height: 1.6;
 }
 
@@ -13,7 +13,7 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #FFFFFF; /* Pure white for contrast and clarity */
+  background-color: #ffffff; /* White for clarity and contrast */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
   border-radius: 12px;
   transition: all 0.3s ease; /* Smooth transitions */
@@ -21,52 +21,53 @@ body {
 
 /* Headings */
 h1, h2, h3, h4, h5, h6 {
-  color: #34495E; /* Darker calming grey */
+  color: #264653; /* Deep blue for clear contrast */
   margin-bottom: 15px;
   font-weight: 600;
 }
 
 h1 {
-  font-size: 2.8rem;
+  font-size: 2.5rem;
 }
 
 h2 {
-  font-size: 2.2rem;
+  font-size: 2rem;
 }
 
 h3 {
-  font-size: 1.8rem;
+  font-size: 1.6rem;
 }
 
 /* Links */
 a {
-  color: #5DADE2; /* Light blue for links */
+  color: #457b9d; /* Muted blue for links */
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
 a:hover {
-  color: #2980B9; /* Slightly darker blue for hover state */
+  color: #1d3557; /* Darker blue for hover state */
 }
 
 /* Buttons */
 button, .btn {
-  background-color: #82E0AA; /* Soft green for positive actions */
+  background-color: #a8dadc; /* Soft blue-green for a calming effect */
   border: none;
   border-radius: 6px;
   padding: 10px 20px;
-  color: white;
+  color: #1d3557; /* Dark blue for good contrast */
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 button:hover, .btn:hover {
-  background-color: #58D68D; /* Darker green on hover */
+  background-color: #457b9d; /* Slightly darker blue on hover */
+  transform: translateY(-2px); /* Small lift for interactivity */
 }
 
 button:disabled, .btn:disabled {
-  background-color: #BDC3C7; /* Disabled button state */
+  background-color: #bfc5c7; /* Neutral grey for disabled state */
   cursor: not-allowed;
 }
 
@@ -75,22 +76,22 @@ input, textarea, select {
   width: 100%;
   padding: 10px;
   margin-bottom: 20px;
-  border: 1px solid #D5DBDB; /* Light grey border */
+  border: 1px solid #b0bec5; /* Light grey border for visual clarity */
   border-radius: 6px;
-  background-color: #FBFCFC; /* Off-white background */
+  background-color: #f7f9fa; /* Soft off-white background */
   font-size: 1rem;
-  color: #2C3E50; /* Dark grey text */
+  color: #2a2a2a; /* Dark grey text */
   transition: border-color 0.3s ease;
 }
 
 input:focus, textarea:focus, select:focus {
-  border-color: #5DADE2; /* Soft blue focus outline */
+  border-color: #457b9d; /* Blue focus outline for emphasis */
   outline: none;
 }
 
 /* Cards */
 .card {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 20px;
@@ -104,11 +105,11 @@ input:focus, textarea:focus, select:focus {
 }
 
 .card-header {
-  background-color: #A9DFBF; /* Very light green header */
+  background-color: #e9f5f5; /* Very light blue-green header */
   padding: 15px;
-  border-bottom: 1px solid #EAEDED;
+  border-bottom: 1px solid #d1e3e5;
   font-size: 1.25rem;
-  color: #2C3E50;
+  color: #264653; /* Dark blue */
   border-radius: 10px 10px 0 0;
 }
 
@@ -118,7 +119,7 @@ input:focus, textarea:focus, select:focus {
 
 /* Navigation bar */
 .navbar {
-  background-color: #2E86C1; /* Calm soft blue */
+  background-color: #264653; /* Deep blue */
   padding: 15px;
   text-align: center;
   display: flex;
@@ -127,7 +128,7 @@ input:focus, textarea:focus, select:focus {
 }
 
 .navbar a {
-  color: white;
+  color: #f1faee; /* Light color for good contrast */
   padding: 10px 20px;
   text-decoration: none;
   font-size: 1.2rem;
@@ -136,7 +137,7 @@ input:focus, textarea:focus, select:focus {
 }
 
 .navbar a:hover {
-  background-color: #21618C; /* Slightly darker on hover */
+  background-color: #1d3557; /* Darker blue on hover */
   border-radius: 5px;
 }
 
@@ -148,44 +149,45 @@ input:focus, textarea:focus, select:focus {
 
 /* Footer */
 footer {
-  background-color: #F3F7FA; /* Same light blue as the body background */
+  background-color: #264653; /* Deep blue for consistency with navbar */
   text-align: center;
   padding: 20px;
-  color: #566573; /* Grey tone */
+  color: #f1faee; /* Light color for contrast */
 }
 
 footer a {
-  color: #5DADE2;
+  color: #a8dadc; /* Soft blue-green for links */
   transition: color 0.3s ease;
 }
 
 footer a:hover {
-  color: #2980B9;
+  color: #457b9d;
 }
 
 /* Forms */
 form {
-  background-color: #ECF0F1; /* Light grey background for forms */
+  background-color: #f0f4f8; /* Light blue-grey for a soft look */
   padding: 20px;
   border-radius: 10px;
 }
 
 label {
   font-size: 1rem;
-  color: #34495E;
+  color: #264653; /* Dark blue for readability */
 }
 
 input[type="submit"], button[type="submit"] {
-  background-color: #5DADE2;
+  background-color: #457b9d;
   border: none;
-  color: white;
+  color: #f1faee; /* Light color for contrast */
   padding: 10px 20px;
   border-radius: 6px;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 input[type="submit"]:hover, button[type="submit"]:hover {
-  background-color: #2980B9;
+  background-color: #1d3557;
+  transform: translateY(-2px);
 }
 
 /* Modals */
@@ -197,12 +199,12 @@ input[type="submit"]:hover, button[type="submit"]:hover {
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.4); /* Dim background */
   transition: all 0.3s ease;
 }
 
 .modal-content {
-  background-color: white;
+  background-color: #ffffff;
   padding: 20px;
   border-radius: 12px;
   width: 50%;
@@ -212,11 +214,12 @@ input[type="submit"]:hover, button[type="submit"]:hover {
 
 .modal-header, .modal-footer {
   padding: 15px;
-  background-color: #82E0AA; /* Light green for headers and footers */
+  background-color: #a8dadc; /* Light blue-green for headers and footers */
 }
 
 .modal-header h2 {
   margin: 0;
+  color: #264653; /* Dark blue for contrast */
 }
 
 .modal-footer {
@@ -273,7 +276,7 @@ input[type="submit"]:hover, button[type="submit"]:hover {
 /* Logo Implementation */
 /* Adding the logo to the navbar */
 .navbar img {
-  content: url('/VaultConnect/Images/Logo.png');
+  content: url('./Images/Logo.png');
   height: 40px; /* Adjust height as needed */
   display: inline-block;
   vertical-align: middle;

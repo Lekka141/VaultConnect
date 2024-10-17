@@ -1,44 +1,78 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, IconButton } from '@mui/material';
+import { AppBar, Toolbar, Typography, IconButton, Button, Box } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import { useNavigate } from 'react-router-dom';
 
 /**
- * AppNavbar component renders the top navigation bar with branding and menu icon
+ * AppNavbar component renders the top navigation bar with branding, menu icon, and navigation buttons.
  *
- * This component provides a consistent header for the application with a title and an optional menu icon.
- * It uses Material-UI components to create a responsive AppBar, making it look modern and consistent
- * with the overall Material Design language.
+ * This component provides a consistent header for the application with a title, an optional menu icon, and navigation links.
+ * It uses Material-UI components to create a responsive AppBar, making it look modern and consistent with the overall Material Design language.
  *
  * @returns {JSX.Element} - The rendered navigation bar
  */
 function AppNavbar() {
+  /** Hook to navigate the user to different routes */
+  const navigate = useNavigate();
+
+  /**
+   * Handles navigation to the sign-in page
+   */
+  const handleSignIn = () => {
+    navigate('/signin'); /** Redirects to the sign-in page */
+  };
+
+  /**
+   * Placeholder function for handling menu click.
+   * This function should ideally toggle the side menu for mobile devices.
+   */
+  const handleMenuClick = () => {
+    console.log('Menu button clicked'); /** Logs the menu button click for development purposes */
+    // TODO: Implement side menu toggling logic
+  };
+
   return (
-    /**
-     * AppBar component serves as a container for the navigation elements.
-     * 'position="static"' keeps the AppBar positioned at the top but does not scroll with the content.
-     */
-    <AppBar position="static">
-      {/* Toolbar provides consistent spacing for the content inside the AppBar. */}
+    <AppBar position="static" sx={{ backgroundColor: 'primary.dark' }}>
       <Toolbar>
-        {/*
-         * IconButton renders a button with an icon (in this case, a menu icon).
-         * It is typically used for triggering a drawer (side menu) on smaller screens.
-         *
-         * 'edge="start"' aligns the button at the start of the toolbar,
-         * 'color="inherit"' ensures the button matches the AppBar's color scheme.
-         */}
-        <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
+        {/** Menu Button for mobile devices */}
+        <IconButton
+          edge="start"
+          color="inherit"
+          aria-label="menu"
+          onClick={handleMenuClick} /** Calls the handleMenuClick function when menu button is clicked */
+          sx={{ mr: 2, display: { xs: 'block', md: 'none' } }}
+        >
           <MenuIcon />
         </IconButton>
 
-        {/*
-         * Typography component renders the text for the application title.
-         * 'variant="h6"' sets the text style to be suitable for a heading of level 6,
-         * 'component="div"' indicates the HTML element to be rendered, in this case, a div.
-         */}
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+        {/** Branding */}
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{ flexGrow: 1, fontWeight: 'bold', display: 'flex', alignItems: 'center' }}
+        >
+          <img
+            src="/Images/Logo.png" /** Updated the path to be relative to the public directory */
+            alt="VaultConnect Logo"
+            style={{ height: '40px', marginRight: '10px' }}
+          />
           VaultConnect Dashboard
         </Typography>
+
+        {/** Navigation Links */}
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
+          <Button color="inherit" onClick={() => navigate('/features')}>Features</Button>
+          <Button color="inherit" onClick={() => navigate('/about')}>About Us</Button>
+          <Button color="inherit" onClick={() => navigate('/contact')}>Contact</Button>
+          <Button
+            color="inherit"
+            variant="outlined"
+            onClick={handleSignIn} /** Calls handleSignIn function to navigate to the sign-in page */
+            sx={{ borderColor: 'white', ml: 2 }}
+          >
+            Sign In
+          </Button>
+        </Box>
       </Toolbar>
     </AppBar>
   );

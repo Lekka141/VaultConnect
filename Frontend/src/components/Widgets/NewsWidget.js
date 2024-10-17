@@ -9,7 +9,8 @@ import {
   CircularProgress,
   List,
   ListItem,
-  ListItemText
+  ListItemText,
+  CardActions,
 } from '@mui/material';
 
 /**
@@ -18,61 +19,48 @@ import {
  * @returns {JSX.Element} - Rendered NewsWidget component.
  */
 function NewsWidget() {
-  /** State variables to manage the news query, articles, loading status, and error handling */
-  const [query, setQuery] = useState(''); /** The user's search query */
-  const [articles, setArticles] = useState([]); /** Holds the list of news articles */
-  const [loading, setLoading] = useState(false); /** Tracks if the API request is in progress */
-  const [error, setError] = useState(null); /** Holds any error message */
+  const [query, setQuery] = useState(''); 
+  const [articles, setArticles] = useState([]); 
+  const [loading, setLoading] = useState(false); 
+  const [error, setError] = useState(null); 
 
-  /** NewsAPI Key */
   const apiKey = process.env.REACT_APP_NEWS_API_KEY || '4fbef8e9a8894846bc6adf42ee1cbc89';
 
-  /**
-   * Fetch news articles from NewsAPI based on the user's query.
-   * @param {string} query - The search keyword to fetch relevant news articles.
-   */
   const fetchNews = async (query) => {
-    setLoading(true); /** Set loading to true when making the API request */
-    setError(null); /** Clear previous errors */
+    setLoading(true);
+    setError(null); 
     try {
       const response = await axios.get(
         `https://newsapi.org/v2/everything?q=${query}&apiKey=${apiKey}`
       );
-      setArticles(response.data.articles); /** Store fetched news articles in articles state */
+      setArticles(response.data.articles); 
     } catch (err) {
-      setError('Failed to fetch news. Please try again.'); /** Set error if the API request fails */
+      setError('Failed to fetch news. Please try again.');
     }
-    setLoading(false); /** Stop loading after the API request completes */
+    setLoading(false);
   };
 
-  /** Fetch default news on component mount */
   useEffect(() => {
     fetchNews('latest');
   }, []);
 
-  /**
-   * Handle the change in the search input field and update the query state.
-   * @param {object} event - The input change event.
-   */
   const handleQueryChange = (event) => {
-    setQuery(event.target.value); /** Update the query state based on user input */
+    setQuery(event.target.value);
   };
 
-  /** Trigger a new news fetch based on the entered query */
   const handleSearch = () => {
     if (query.trim() !== '') {
-      fetchNews(query); /** Fetch news articles for the current query */
+      fetchNews(query);
     }
   };
 
   return (
-    <Card sx={{ maxWidth: 400, margin: 'auto' }}>
+    <Card sx={{ maxWidth: 500, margin: '20px auto', height: '100%', overflowY: 'auto' }}>
       <CardContent>
         <Typography variant="h5" gutterBottom>
           News Widget
         </Typography>
 
-        {/* Input field for the user to enter a search query */}
         <TextField
           label="Search News"
           variant="outlined"
@@ -82,7 +70,6 @@ function NewsWidget() {
           sx={{ marginBottom: 2, width: '100%' }}
         />
 
-        {/* Button to trigger the search for news articles */}
         <Button
           variant="contained"
           color="primary"
@@ -93,21 +80,20 @@ function NewsWidget() {
           Search
         </Button>
 
-        {/* Display loading spinner if the request is in progress */}
-        {loading && <CircularProgress sx={{ marginTop: 2, display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />}
+        {loading && (
+          <CircularProgress sx={{ marginTop: 2, display: 'block', marginLeft: 'auto', marginRight: 'auto' }} />
+        )}
 
-        {/* Display error message if any error occurs */}
         {error && (
           <Typography color="error" sx={{ marginTop: 2 }}>
             {error}
           </Typography>
         )}
 
-        {/* Display the fetched news articles */}
         {!loading && !error && articles.length > 0 && (
           <List>
             {articles.slice(0, 5).map((article, index) => (
-              <ListItem key={index} alignItems="flex-start">
+              <ListItem key={index} alignItems="flex-start" sx={{ marginBottom: 2 }}>
                 <ListItemText
                   primary={article.title}
                   secondary={
@@ -119,6 +105,23 @@ function NewsWidget() {
                       >
                         {article.source.name} - {new Date(article.publishedAt).toLocaleDateString()}
                       </Typography>
+                      <Typography variant="body2" sx={{ marginTop: 1 }}>
+                        {article.description ? article.description.substring(0, 100) + '...' : ''}
+                      </Typography>
+                      {article.url && (
+                        <CardActions>
+                          <Button
+                            href={article.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            variant="outlined"
+                            size="small"
+                            sx={{ marginTop: 1 }}
+                          >
+                            Read More
+                          </Button>
+                        </CardActions>
+                      )}
                     </>
                   }
                 />

@@ -1,11 +1,8 @@
-/**
- * AuthContext.js
- * This file contains the context for managing authentication state across the app.
- * It provides authentication state, user data, login, and logout functionalities.
- */
-
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
+import API from '../../utils/API'; /** Assuming an API utility for backend interaction */
 
 /** Create the AuthContext to be used globally in the application */
 export const AuthContext = createContext();
@@ -20,77 +17,72 @@ export const useAuth = () => useContext(AuthContext);
  * @param {ReactNode} children - The components that require access to the authentication state.
  */
 export const AuthProvider = ({ children }) => {
-  /**
-   * State for tracking if the user is authenticated.
-   * @type {boolean} isAuthenticated - Represents whether the user is currently logged in.
-   */
+  /** State for tracking if the user is authenticated. */
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  /**
-   * State for storing the logged-in user's information.
-   * @type {Object|null} user - Stores information about the authenticated user (e.g., id, name, email).
-   */
+  /** State for storing the logged-in user's information. */
   const [user, setUser] = useState(null);
 
-  /**
-   * State for tracking if authentication state is being initialized or changed.
-   * @type {boolean} isLoading - Represents whether the authentication status is being checked or updated.
-   */
+  /** State for tracking if authentication state is being initialized or changed. */
   const [isLoading, setIsLoading] = useState(true);
 
   /**
-   * useEffect hook to initialize authentication state by checking localStorage for any
+   * useEffect hook to initialize authentication state by checking sessionStorage for any
    * stored authentication status and user information. This ensures that the user's
-   * authentication persists across page reloads.
+   * authentication persists across page reloads while not exposing data in localStorage.
    */
   useEffect(() => {
-    const storedAuthStatus = localStorage.getItem('isAuthenticated');
-    const storedUser = localStorage.getItem('user');
+    const storedAuthStatus = sessionStorage.getItem('isAuthenticated');
+    const storedUser = sessionStorage.getItem('user');
 
-    if (storedAuthStatus === 'true') {
+    if (storedAuthStatus === 'true' && storedUser) {
       setIsAuthenticated(true);
       setUser(JSON.parse(storedUser));
     }
-    setIsLoading(false); // Authentication status has been checked
+    setIsLoading(false); /** Authentication status has been checked */
   }, []);
 
   /**
    * login function to authenticate the user, update authentication state,
-   * and persist authentication information in localStorage.
+   * and persist authentication information in sessionStorage.
    *
    * @param {string} email - The user's email address.
    * @param {string} password - The user's password.
    * @returns {Promise<void>} - Resolves if login is successful, rejects otherwise.
    */
-  const login = (email, password) => {
-    return new Promise((resolve, reject) => {
-      // Mock API request (replace with real authentication API call)
-      if (email === 'user@example.com' && password === 'password123') {
-        const userData = {
-          id: '123',
-          name: 'John Doe',
-          email,
-        };
+  const login = async (email, password) => {
+    try {
+      /** Make an API request to authenticate the user */
+      const response = await API.post('/login', { email, password });
+
+      if (response.data.token) {
+        /** Assume response includes user data and a token */
+        const userData = response.data.user;
+
         setIsAuthenticated(true);
         setUser(userData);
-        localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('user', JSON.stringify(userData));
-        resolve();
+        sessionStorage.setItem('isAuthenticated', 'true');
+        sessionStorage.setItem('user', JSON.stringify(userData));
+        sessionStorage.setItem('authToken', response.data.token);
       } else {
-        reject(new Error('Invalid email or password'));
+        throw new Error('Authentication failed.');
       }
-    });
+    } catch (error) {
+      console.error('Login error:', error.message || error);
+      throw error; /** Rethrow the error for the caller to handle */
+    }
   };
 
   /**
    * logout function to clear authentication state, user data, and any stored session
-   * information from localStorage, effectively logging the user out.
+   * information from sessionStorage, effectively logging the user out.
    */
   const logout = () => {
     setIsAuthenticated(false);
     setUser(null);
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('isAuthenticated');
+    sessionStorage.removeItem('user');
+    sessionStorage.removeItem('authToken');
   };
 
   return (
@@ -99,7 +91,20 @@ export const AuthProvider = ({ children }) => {
      * This makes the "isAuthenticated", "user", "isLoading", "login", and "logout" accessible throughout the component tree.
      */
     <AuthContext.Provider value={{ isAuthenticated, user, isLoading, login, logout }}>
-      {!isLoading ? children : <div>Loading...</div>}
+      {!isLoading ? (
+        children
+      ) : (
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '100vh',
+          }}
+        >
+          <CircularProgress aria-label="Loading authentication status" /> /** Improved loading state UX with a spinner */
+        </Box>
+      )}
     </AuthContext.Provider>
   );
 };

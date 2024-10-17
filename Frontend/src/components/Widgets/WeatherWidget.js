@@ -1,126 +1,86 @@
 import React, { useState, useEffect } from 'react';
+import { Card, CardContent, Typography, Box, CircularProgress } from '@mui/material';
 import axios from 'axios';
-import { Card, CardContent, Typography, TextField, Button, CircularProgress, Grid } from '@mui/material';
 
 /**
- * WeatherWidget component that fetches and displays weather information for a given city.
- * Allows users to input a city name and retrieve its current weather information.
- * @returns {JSX.Element} - Rendered WeatherWidget component.
+ * WeatherWidget component displays current weather information for a specified city.
+ * It uses OpenWeather API to fetch weather data.
+ *
+ * @returns {JSX.Element} - The rendered weather widget
  */
-function WeatherWidget() {
-  /** State variables to manage city, weather data, loading status, and error handling */
-  const [city, setCity] = useState('Johannesburg');  /** Default city set to Johannesburg */
-  const [weatherData, setWeatherData] = useState(null);  /** Holds the weather data */
-  const [loading, setLoading] = useState(false);  /** Tracks if the API request is in progress */
-  const [error, setError] = useState(null);  /** Holds any error message */
+const WeatherWidget = () => {
+  /** State for storing weather data and loading status */
+  const [weather, setWeather] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  /** OpenWeatherMap API Key */
-  const apiKey = 'c2201704c24e9a5fbf114d5629d66e10';
+  /** City for which to display the weather */
+  const city = 'Cape Town';
 
-  /**
-   * Fetch weather data from OpenWeather API for the specified city.
-   * @param {string} city - The name of the city for which to fetch weather data.
-   */
-  const fetchWeatherData = async (city) => {
-    setLoading(true);  /** Set loading to true when making the API request */
-    setError(null);  /** Clear previous errors */
-    try {
-      const response = await axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
-      );
-      setWeatherData(response.data);  /** Store fetched data in weatherData state */
-    } catch (err) {
-      setError('Failed to fetch weather data. Please try again.');  /** Set error if the API request fails */
-    }
-    setLoading(false);  /** Stop loading after the API request completes */
-  };
-
-  /** Fetch the default weather data for the default city on component mount */
+  /** useEffect hook to fetch weather data from the OpenWeather API */
   useEffect(() => {
-    fetchWeatherData(city);
-  }, []);
+    const fetchWeatherData = async () => {
+      try {
+        setLoading(true);
+        setError('');
 
-  /**
-   * Handle changes in the city input field and update the state.
-   * @param {object} event - The input change event.
-   */
-  const handleCityChange = (event) => {
-    setCity(event.target.value);  /** Update the city state based on user input */
-  };
+        /** Fetch weather data using OpenWeather API */
+        const response = await axios.get(
+          `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${process.env.REACT_APP_OPENWEATHER_API_KEY}&units=metric`
+        );
+        setWeather(response.data);
+      } catch (err) {
+        setError('Failed to fetch weather data. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  /** Trigger a new weather data fetch for the entered city */
-  const handleSearch = () => {
-    if (city) {
-      fetchWeatherData(city);  /** Fetch weather data for the current city */
-    }
-  };
+    fetchWeatherData();
+  }, [city]);
 
   return (
-    <Card sx={{ maxWidth: 400, margin: 'auto' }}>
+    <Card sx={{ minWidth: 275 }}>
       <CardContent>
-        <Typography variant="h5" gutterBottom>
-          Weather Widget
-        </Typography>
-
-        {/* Input field for the user to enter a city */}
-        <TextField
-          label="Enter City"
-          variant="outlined"
-          size="small"
-          value={city}
-          onChange={handleCityChange}
-          sx={{ marginBottom: 2, width: '100%' }}
-        />
-
-        {/* Button to fetch weather data for the specified city */}
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSearch}
-          disabled={loading}
-          sx={{ width: '100%' }}
-        >
-          Get Weather
-        </Button>
-
-        {/* Display loading spinner if the request is in progress */}
-        {loading && <CircularProgress sx={{ marginTop: 2 }} />}
-
-        {/* Display error message if any error occurs */}
-        {error && (
-          <Typography color="error" sx={{ marginTop: 2 }}>
+        {loading ? (
+          /** Display a loading spinner while data is being fetched */
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+            <CircularProgress aria-label="Loading weather data" />
+            <Typography sx={{ mt: 2 }}>Fetching weather data for {city}...</Typography>
+          </Box>
+        ) : error ? (
+          /** Display an error message if data fetching fails */
+          <Typography color="error" aria-label="Weather data error">
             {error}
           </Typography>
-        )}
-
-        {/* Display the fetched weather data */}
-        {weatherData && !loading && !error && (
-          <Grid container spacing={2} sx={{ marginTop: 2 }}>
-            <Grid item xs={12}>
-              <Typography variant="h6">{weatherData.name}</Typography>
-              <Typography variant="body1">{weatherData.weather[0].description}</Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body2">Temperature: {weatherData.main.temp}°C</Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body2">Feels like: {weatherData.main.feels_like}°C</Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body2">Humidity: {weatherData.main.humidity}%</Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body2">Wind Speed: {weatherData.wind.speed} m/s</Typography>
-            </Grid>
-            <Grid item xs={12}>
-              <Typography variant="body2">Min Temp: {weatherData.main.temp_min}°C</Typography>
-              <Typography variant="body2">Max Temp: {weatherData.main.temp_max}°C</Typography>
-            </Grid>
-          </Grid>
+        ) : weather ? (
+          /** Display weather information if data is successfully fetched */
+          <Box>
+            <Typography variant="h5" component="div">
+              Weather in {weather.name}
+            </Typography>
+            <Typography variant="body2">
+              Temperature: {weather.main.temp}°C
+            </Typography>
+            <Typography variant="body2">
+              Condition: {weather.weather[0].description}
+            </Typography>
+            <Typography variant="body2">
+              Humidity: {weather.main.humidity}%
+            </Typography>
+            <Typography variant="body2">
+              Wind Speed: {weather.wind.speed} m/s
+            </Typography>
+          </Box>
+        ) : (
+          /** Fallback if no data is available */
+          <Typography variant="body2" aria-label="No weather data available">
+            No weather data available.
+          </Typography>
         )}
       </CardContent>
     </Card>
   );
-}
+};
 
 export default WeatherWidget;

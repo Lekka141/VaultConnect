@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Box, Card, CardContent, Checkbox, FormControlLabel, Grid, Button, Typography } from '@mui/material';
 import WeatherWidget from './Widgets/WeatherWidget';
 import NewsWidget from './Widgets/NewsWidget';
@@ -24,6 +24,16 @@ const WidgetSelector = () => {
         rssFeed: false,
         toDo: false,
     });
+
+    /**
+     * Effect to load selected widgets from localStorage on component mount
+     */
+    useEffect(() => {
+        const savedWidgets = localStorage.getItem('selectedWidgets');
+        if (savedWidgets) {
+            setSelectedWidgets(JSON.parse(savedWidgets)); /** Load saved selection from localStorage */
+        }
+    }, []);
 
     /**
      * List of available widgets for dynamic rendering
@@ -66,6 +76,7 @@ const WidgetSelector = () => {
                         checked={selectedWidgets[name]}
                         onChange={() => handleWidgetChange(name)}
                         name={name}
+                        aria-label={`Select ${label}`} /** Add aria-label for accessibility */
                     />
                 }
                 label={label}
@@ -91,6 +102,14 @@ const WidgetSelector = () => {
         );
     }, [selectedWidgets, widgetsList]);
 
+    /**
+     * Handles Apply Selection button click to save the selected widgets
+     */
+    const handleApplySelection = () => {
+        localStorage.setItem('selectedWidgets', JSON.stringify(selectedWidgets)); /** Persist the selected widgets state in localStorage */
+        console.log('Selected widgets saved:', selectedWidgets); /** Logs selected widgets for development purposes */
+    };
+
     return (
         <Box>
             <Card sx={{ marginBottom: 3 }}>
@@ -98,15 +117,20 @@ const WidgetSelector = () => {
                     <Typography variant="h5" gutterBottom>
                         Select Your Widgets
                     </Typography>
-                    {/* Render checkboxes dynamically */}
+                    {/** Render checkboxes dynamically */}
                     {renderCheckboxes()}
-                    <Button variant="contained" color="primary" sx={{ marginTop: 2 }}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        sx={{ marginTop: 2 }}
+                        onClick={handleApplySelection} /** Calls handleApplySelection function to apply selected widgets */
+                    >
                         Apply Selection
                     </Button>
                 </CardContent>
             </Card>
 
-            {/* Render selected widgets */}
+            {/** Render selected widgets */}
             {renderedWidgets}
         </Box>
     );

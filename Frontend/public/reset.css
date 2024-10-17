@@ -1,55 +1,90 @@
 /* Reset all elements' margins, paddings, and box-sizing */
-* {
+*,
+*::before,
+*::after {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-  }
-  
-  /* Remove default list styles */
-  ul, ol {
-    list-style: none;
-  }
-  
-  /* Remove default link styles */
-  a {
-    text-decoration: none;
-    color: inherit;
-  }
-  
-  /* Reset button and input styles */
-  button, input, textarea, select {
-    font-family: inherit;
-    font-size: inherit;
+    box-sizing: border-box; /* Includes padding and borders in element's total width/height */
+}
+
+/* Remove default list styles */
+ul, ol {
+    list-style: none; /* Removes bullets/numbers */
     margin: 0;
-  }
-  
-  /* Reset tables */
-  table {
-    border-collapse: collapse;
-    border-spacing: 0;
-  }
-  
-  /* Ensure media elements have responsive layout */
-  img, video {
-    max-width: 100%;
-    height: auto;
-  }
-  
-  /* Basic reset for form elements */
-  input, button, textarea, select {
+    padding: 0; /* Ensures no extra space around lists */
+}
+
+/* Remove default link styles */
+a {
+    text-decoration: none; /* Removes underline */
+    color: inherit; /* Inherits color from parent element */
+    cursor: pointer; /* Makes links clearly clickable */
+}
+
+/* Reset button and input styles for consistency */
+button, input, textarea, select {
+    font-family: inherit; /* Ensures they use the parent font */
+    font-size: inherit; /* Matches parent font size for consistency */
+    margin: 0;
+    border: none; /* Removes borders for uniform appearance */
+    background-color: transparent; /* Default transparent background */
+    outline: none; /* Removes default outline for better customization */
+}
+
+/* Reset tables */
+table {
+    border-collapse: collapse; /* Ensures no double borders between table cells */
+    border-spacing: 0; /* Removes space between table cells */
+}
+
+/* Ensure media elements have responsive layout */
+img, video, audio {
+    max-width: 100%; /* Ensures they do not exceed their container's width */
+    height: auto; /* Maintains aspect ratio */
+    display: block; /* Removes inline spacing and prevents extra gaps */
+}
+
+/* Ensure form elements have consistent styles */
+input, button, textarea, select {
+    border: none; /* Removes default border styles */
+    background: transparent; /* No background color */
+    padding: 0; /* Removes default padding */
+}
+
+/* Remove default styling from headings */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal; /* Resets to default font weight */
+    line-height: 1.25; /* Improves text readability */
+    margin: 0;
+}
+
+/* Reset blockquote styles */
+blockquote {
+    margin: 0;
+    padding: 0;
+    border-left: none; /* Removes default blockquote border */
+}
+
+/* Remove default fieldset and legend styles */
+fieldset {
     border: none;
-    background-color: transparent;
-  }
-  
-  /* Remove default styling from headings */
-  h1, h2, h3, h4, h5, h6 {
-    font-weight: normal;
-    line-height: 1.2;
-  }
-  
-  /* Reset blockquote styles */
-  blockquote {
     margin: 0;
     padding: 0;
-  }
-  
+}
+
+legend {
+    margin: 0;
+    padding: 0;
+    font-weight: inherit; /* Matches inherited font styles */
+    font-size: inherit; /* Matches inherited font size */
+}
+
+/* General media element reset */
+iframe {
+    border: 0; /* Removes border from iframe */
+}
+
+/* Remove outline on focus for accessibility, but keep for keyboard navigation */
+:focus {
+    outline: 0;
+}

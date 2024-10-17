@@ -1,47 +1,77 @@
-import React, { useState, useEffect } from 'react';
-import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
-import { getSignUpTheme } from './theme/getSignUpTheme';
+import React, { createContext, useState, useMemo, useContext, useEffect } from 'react';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import IconButton from '@mui/material/IconButton';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 
 /**
- * Component to toggle between light and dark modes.
- * 
- * @param {object} props - React component props.
- * @returns {JSX.Element} - Theme provider with the ability to toggle color mode.
+ * Create a context for managing the color mode
+ */
+const ColorModeContext = createContext({ toggleColorMode: () => {} });
+
+/**
+ * Custom hook to use the ColorModeContext more easily
+ */
+export const useColorMode = () => useContext(ColorModeContext);
+
+/**
+ * ToggleColourMode component manages the color mode (dark/light) for the application.
+ * It uses Material UI's theme and provides a toggle button to switch between modes.
+ *
+ * @param {ReactNode} children - The components that require access to the color mode state.
+ * @returns {JSX.Element} - The rendered ThemeProvider and color mode toggle button.
  */
 export default function ToggleColourMode({ children }) {
-  const [mode, setMode] = useState('light');
+  /** State for managing the current color mode ('light' or 'dark') */
+  const [mode, setMode] = useState(() => {
+    /** Load initial mode from localStorage if available, otherwise default to 'light' */
+    return localStorage.getItem('colorMode') || 'light';
+  });
 
   /**
-   * Check and set the mode from localStorage on component mount.
+   * Toggles the color mode between 'light' and 'dark'
    */
-  useEffect(() => {
-    const savedMode = localStorage.getItem('themeMode');
-    if (savedMode) {
-      setMode(savedMode);
-    } else {
-      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setMode(systemPrefersDark ? 'dark' : 'light');
-    }
-  }, []);
+  const colorMode = useMemo(
+    () => ({
+      toggleColorMode: () => {
+        setMode((prevMode) => {
+          const newMode = prevMode === 'light' ? 'dark' : 'light';
+          localStorage.setItem('colorMode', newMode); /** Save mode to localStorage */
+          return newMode;
+        });
+      },
+    }),
+    []
+  );
 
   /**
-   * Toggles between light and dark modes.
+   * Memoized theme based on the current mode
    */
-  const toggleColorMode = () => {
-    const newMode = mode === 'light' ? 'dark' : 'light';
-    setMode(newMode);
-    localStorage.setItem('themeMode', newMode);
-  };
-
-  const theme = createTheme(getSignUpTheme(mode));
+  const theme = useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode,
+        },
+      }),
+    [mode]
+  );
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <button onClick={toggleColorMode}>
-        Toggle {mode === 'light' ? 'Dark' : 'Light'} Mode
-      </button>
-      {children}
-    </ThemeProvider>
+    <ColorModeContext.Provider value={colorMode}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <IconButton
+          sx={{ position: 'fixed', top: 16, right: 16 }}
+          onClick={colorMode.toggleColorMode}
+          color="inherit"
+          aria-label={`Toggle ${mode === 'light' ? 'dark' : 'light'} mode`}
+        >
+          {mode === 'light' ? <Brightness4Icon /> : <Brightness7Icon />}
+        </IconButton>
+        {children}
+      </ThemeProvider>
+    </ColorModeContext.Provider>
   );
 }
