@@ -1,8 +1,8 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const jwt = require('jsonwebtoken'); // Import the jsonwebtoken library for handling JWT
+const User = require('../models/User'); // Import the User model to access user data
 
 const protect = async (req, res, next) => {
-  let token;
+  let token; // Variable to store the JWT
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
       token = req.headers.authorization.split(' ')[1];
