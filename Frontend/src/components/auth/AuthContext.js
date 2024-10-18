@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import API from '../../utils/API'; /** Assuming an API utility for backend interaction */
+import mockUsers from '../../utils/mockUsers.json'; /** Importing mock users for authentication */
 
 /** Create the AuthContext to be used globally in the application */
 export const AuthContext = createContext();
@@ -52,6 +53,16 @@ export const AuthProvider = ({ children }) => {
    */
   const login = async (email, password) => {
     try {
+      /** Check if user exists in mock data */
+      const mockUser = mockUsers.find((user) => user.email === email && user.password === password);
+      if (mockUser) {
+        setIsAuthenticated(true);
+        setUser(mockUser);
+        sessionStorage.setItem('isAuthenticated', 'true');
+        sessionStorage.setItem('user', JSON.stringify(mockUser));
+        return;
+      }
+
       /** Make an API request to authenticate the user */
       const response = await API.post('/login', { email, password });
 
@@ -85,12 +96,26 @@ export const AuthProvider = ({ children }) => {
     sessionStorage.removeItem('authToken');
   };
 
+  /**
+   * signInWithGoogle function to handle Google OAuth sign-in.
+   * This is a placeholder function that should be implemented with actual Google OAuth flow.
+   */
+  const signInWithGoogle = async () => {
+    try {
+      // Placeholder for Google sign-in logic
+      console.log('Google sign-in is not implemented yet.');
+    } catch (error) {
+      console.error('Google sign-in error:', error.message || error);
+      throw error;
+    }
+  };
+
   return (
     /**
      * AuthContext.Provider allows child components to access authentication-related state and functions.
-     * This makes the "isAuthenticated", "user", "isLoading", "login", and "logout" accessible throughout the component tree.
+     * This makes the "isAuthenticated", "user", "isLoading", "login", "logout", and "signInWithGoogle" accessible throughout the component tree.
      */
-    <AuthContext.Provider value={{ isAuthenticated, user, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, isLoading, login, logout, signInWithGoogle }}>
       {!isLoading ? (
         children
       ) : (

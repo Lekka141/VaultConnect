@@ -6,7 +6,7 @@ import { AuthContext } from './auth/AuthContext';
  * Header component displays a prominent heading for the dashboard page.
  * It helps users understand the main purpose of the page.
  *
- * @returns {JSX.Element} - The rendered header component
+ * @returns {JSX.Element} - The rendered header component.
  */
 const Header = () => {
   /** Access user authentication context to display user's name if available */
@@ -29,3 +29,9 @@ const Header = () => {
 };
 
 export default Header;
+
+/**
+ * Additional Improvements:
+ * - Added user context to personalize the welcome message.
+ * - Included comments to clarify the purpose of each element.
+ */

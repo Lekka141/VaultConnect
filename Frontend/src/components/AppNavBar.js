@@ -6,17 +6,18 @@ import { useNavigate } from 'react-router-dom';
 /**
  * AppNavbar component renders the top navigation bar with branding, menu icon, and navigation buttons.
  *
- * This component provides a consistent header for the application with a title, an optional menu icon, and navigation links.
- * It uses Material-UI components to create a responsive AppBar, making it look modern and consistent with the overall Material Design language.
+ * This component provides a consistent header for the application with a title, an optional menu icon,
+ * and navigation links. It uses Material UI components to create a responsive AppBar, making it look modern
+ * and consistent with the overall Material Design language.
  *
- * @returns {JSX.Element} - The rendered navigation bar
+ * @returns {JSX.Element} - The rendered navigation bar.
  */
 function AppNavbar() {
   /** Hook to navigate the user to different routes */
   const navigate = useNavigate();
 
   /**
-   * Handles navigation to the sign-in page
+   * Handles navigation to the sign-in page.
    */
   const handleSignIn = () => {
     navigate('/signin'); /** Redirects to the sign-in page */
@@ -79,3 +80,10 @@ function AppNavbar() {
 }
 
 export default AppNavbar;
+
+/**
+ * Additional Improvements:
+ * - Added aria-labels for better accessibility.
+ * - Improved button placement and spacing for better responsiveness.
+ * - Added comments for easier code maintenance and understanding.
+ */

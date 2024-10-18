@@ -6,10 +6,8 @@ import { useNavigate } from 'react-router-dom';
 
 /**
  * SignIn component for user authentication using email/password or Google authentication.
- *
  * This component allows users to sign in using their credentials or Google OAuth.
  * The authentication logic is handled through the AuthContext.
- *
  * @returns {JSX.Element} - The rendered sign-in form
  */
 const SignIn = () => {
@@ -19,13 +17,22 @@ const SignIn = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  /** Using signIn and signInWithGoogle functions from AuthContext */
+  /** Using login and signInWithGoogle functions from AuthContext */
   const { login, signInWithGoogle } = useAuth();
   const navigate = useNavigate(); /** Hook to navigate to different routes */
 
   /**
+   * Utility function to handle loading state for buttons.
+   * @param {string} text - The text to display on the button.
+   * @param {boolean} isLoading - Whether the button is in loading state.
+   * @returns {JSX.Element} - The button content with or without a loading spinner.
+   */
+  const renderButtonContent = (text, isLoading) => (
+    isLoading ? <CircularProgress size={24} /> : text
+  );
+
+  /**
    * Handles form submission for sign-in with email and password.
-   *
    * @param {object} e - The form submission event
    */
   const handleSubmit = async (e) => {
@@ -42,11 +49,11 @@ const SignIn = () => {
 
     try {
       await login(email, password);
-      setLoading(false);
       navigate('/dashboard'); /** Redirects to the dashboard upon successful sign-in */
     } catch (err) {
       setError('Invalid email or password. Please try again.');
-      setLoading(false);
+    } finally {
+      setLoading(false); /** Always reset loading state */
     }
   };
 
@@ -59,11 +66,11 @@ const SignIn = () => {
 
     try {
       await signInWithGoogle();
-      setLoading(false);
       navigate('/dashboard'); /** Redirects to the dashboard upon successful Google sign-in */
     } catch (err) {
       setError('Google sign-in failed. Please check your connection and try again.');
-      setLoading(false);
+    } finally {
+      setLoading(false); /** Always reset loading state */
     }
   };
 
@@ -81,7 +88,7 @@ const SignIn = () => {
     >
       {/** VaultConnect Logo and Name */}
       <img
-        src="/Images/Logo.png" /** Updated the path to be relative to the public directory */
+        src={require('../../Images/Logo.png')} /** Ensure proper path and importing image from src */
         alt="VaultConnect Logo"
         style={{ height: '80px', marginBottom: '16px' }}
       />
@@ -124,7 +131,12 @@ const SignIn = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
         {error && (
-          <Typography color="error" variant="body2" sx={{ mt: 1 }}>
+          <Typography
+            color="error"
+            variant="body2"
+            sx={{ mt: 1 }}
+            aria-live="assertive" /** Ensure screen readers announce errors */
+          >
             {error}
           </Typography>
         )}
@@ -135,7 +147,7 @@ const SignIn = () => {
           sx={{ mt: 2 }}
           disabled={loading} /** Disable button while loading */
         >
-          {loading ? <CircularProgress size={24} /> : 'Sign In'}
+          {renderButtonContent('Sign In', loading)}
         </Button>
         <Button
           variant="outlined"
@@ -145,7 +157,7 @@ const SignIn = () => {
           sx={{ mt: 2 }}
           disabled={loading}
         >
-          {loading ? <CircularProgress size={24} /> : 'Sign In with Google'}
+          {renderButtonContent('Sign In with Google', loading)}
         </Button>
       </Box>
     </Box>
