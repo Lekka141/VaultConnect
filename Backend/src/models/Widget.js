@@ -1,6 +1,6 @@
 const WidgetLogic = (widget) => {
-  let editing = false;
-  let title = widget.title;
+  let editing = false; // Flag to track whether the widget is in editing mode
+  let title = widget.title; // Initialize title with the widget's current title
   let content = widget.content;
 
   const handleEditClick = () => {
