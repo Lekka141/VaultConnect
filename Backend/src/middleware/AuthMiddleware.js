@@ -1,6 +1,6 @@
-const express = require('express');
-const jwt = require('jsonwebtoken');
-const rateLimit = require('express-rate-limit');
+const express = require('express'); // Import the Express framework for building web applications
+const jwt = require('jsonwebtoken'); // Import the jsonwebtoken library to create, sign, and verify JWTs
+const rateLimit = require('express-rate-limit'); // Import express-rate-limit to limit the number of requests from a single IP address
 
 const authMiddleware = (req, res, next) => {
     // Get token from headers and handle Bearer format
