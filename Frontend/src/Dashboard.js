@@ -1,20 +1,17 @@
-import React, { useState, useEffect, Suspense } from 'react';
-import { Box, CircularProgress, Typography, Button } from '@mui/material';
-import MainGrid from './components/MainGrid';
-import Header from './components/Header';
-import SideMenu from './components/SideMenu';
+import React, { Suspense, lazy, useState, useEffect } from 'react';
+import { Box, Grid, CircularProgress, Typography } from '@mui/material';
 import { ErrorBoundary } from 'react-error-boundary';
+import WidgetSelector from './components/WidgetSelector'; // Import the WidgetSelector
 import { get } from './utils/API';
 
-/** Lazy load widgets */
-const WeatherWidget = React.lazy(() => import('./components/Widgets/WeatherWidget'));
-const CalendarWidget = React.lazy(() => import('./components/Widgets/CalendarWidget'));
-const ToDoWidget = React.lazy(() => import('./components/Widgets/ToDoWidget'));
-const FinancialNewsWidget = React.lazy(() => import('./components/Widgets/FinancialNewsWidget'));
-const RSSFeedWidget = React.lazy(() => import('./components/Widgets/RSSFeedWidget'));
-const NewsWidget = React.lazy(() => import('./components/Widgets/NewsWidget'));
+// Lazy load widgets
+const WeatherWidget = lazy(() => import('./components/Widgets/WeatherWidget'));
+const CalendarWidget = lazy(() => import('./components/Widgets/CalendarWidget'));
+const ToDoWidget = lazy(() => import('./components/Widgets/ToDoWidget'));
+const FinancialNewsWidget = lazy(() => import('./components/Widgets/FinancialNewsWidget'));
+const NewsWidget = lazy(() => import('./components/Widgets/NewsWidget'));
+const RSSFeedWidget = lazy(() => import('./components/Widgets/RSSFeedWidget'));
 
-/** Fallback component to display while widgets load */
 const LoadingSpinner = () => (
   <Box textAlign="center" mt={4}>
     <CircularProgress />
@@ -22,17 +19,15 @@ const LoadingSpinner = () => (
   </Box>
 );
 
-/** Error Fallback Component for handling widget loading errors */
 const ErrorFallback = ({ error, resetErrorBoundary }) => (
   <Box role="alert" p={2} bgcolor="#fdecea" borderRadius={4}>
     <Typography variant="h6" color="error">Something went wrong!</Typography>
-    <Typography variant="body2" color="textSecondary">{error.message}</Typography>
-    <Button variant="contained" color="primary" onClick={resetErrorBoundary} sx={{ mt: 2 }}>Try again</Button>
+    <Typography variant="body2" color="text.secondary">{error.message}</Typography>
+    <Button variant="contained" color="primary" onClick={resetErrorBoundary}>Try again</Button>
   </Box>
 );
 
 function Dashboard() {
-  /** State to manage active widgets */
   const [activeWidgets, setActiveWidgets] = useState({
     WeatherWidget: true,
     CalendarWidget: true,
@@ -41,9 +36,8 @@ function Dashboard() {
     RSSFeedWidget: false,
     NewsWidget: false,
   });
-  const [data, setData] = useState(null); /** State to hold fetched data */
+  const [data, setData] = useState(null);
 
-  /** Fetch data when the component mounts. */
   useEffect(() => {
     get('/data-endpoint')
       .then(response => {
@@ -54,32 +48,47 @@ function Dashboard() {
       });
   }, []);
 
-  /** Function to toggle the visibility of widgets on the dashboard */
-  const toggleWidget = (widgetName) => {
-    setActiveWidgets(prevWidgets => ({
-      ...prevWidgets,
-      [widgetName]: !prevWidgets[widgetName],
-    }));
-  };
-
   return (
-    <Box display="flex">
-      <SideMenu selectedWidgets={activeWidgets} setSelectedWidgets={setActiveWidgets} /> {/* Sidebar with widget selection to toggle widgets */}
-      <Box flex="1" ml={3}>
-        <Header /> {/* Render the app header */}
-        <MainGrid> {/* Main content area where widgets are displayed */}
-          <ErrorBoundary FallbackComponent={ErrorFallback}>
-            <Suspense fallback={<LoadingSpinner />}>
-              {activeWidgets.WeatherWidget && <WeatherWidget data={data?.weather} />}
-              {activeWidgets.CalendarWidget && <CalendarWidget data={data?.calendar} />}
-              {activeWidgets.ToDoWidget && <ToDoWidget data={data?.todos} />}
-              {activeWidgets.FinancialNewsWidget && <FinancialNewsWidget />}
-              {activeWidgets.RSSFeedWidget && <RSSFeedWidget />}
-              {activeWidgets.NewsWidget && <NewsWidget />}
-            </Suspense>
-          </ErrorBoundary>
-        </MainGrid>
-      </Box>
+    <Box display="flex" flexDirection="column" flex="1" ml={3}>
+      <ErrorBoundary FallbackComponent={ErrorFallback}>
+        <Suspense fallback={<LoadingSpinner />}>
+          <WidgetSelector selectedWidgets={activeWidgets} setSelectedWidgets={setActiveWidgets} />
+          <Box mt={3}>
+            <Grid container spacing={2}> {/* Use Grid container for layout */}
+              {activeWidgets.WeatherWidget && (
+                <Grid item xs={12} sm={6} md={4} lg={3}>
+                  <WeatherWidget data={data?.weather} />
+                </Grid>
+              )}
+              {activeWidgets.CalendarWidget && (
+                <Grid item xs={12} sm={6} md={6} lg={6}> {/* Increased size for CalendarWidget */}
+                  <CalendarWidget data={data?.calendar} />
+                </Grid>
+              )}
+              {activeWidgets.ToDoWidget && (
+                <Grid item xs={12} sm={6} md={4} lg={3}>
+                  <ToDoWidget data={data?.todos} />
+                </Grid>
+              )}
+              {activeWidgets.FinancialNewsWidget && (
+                <Grid item xs={12} sm={6} md={4} lg={3}>
+                  <FinancialNewsWidget />
+                </Grid>
+              )}
+              {activeWidgets.RSSFeedWidget && (
+                <Grid item xs={12} sm={6} md={4} lg={3}>
+                  <RSSFeedWidget />
+                </Grid>
+              )}
+              {activeWidgets.NewsWidget && (
+                <Grid item xs={12} sm={6} md={4} lg={3}>
+                  <NewsWidget />
+                </Grid>
+              )}
+            </Grid>
+          </Box>
+        </Suspense>
+      </ErrorBoundary>
     </Box>
   );
 }
