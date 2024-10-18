@@ -1,11 +1,13 @@
-import React, { Suspense, lazy, useContext } from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import { AuthProvider, AuthContext } from './components/auth/AuthContext';
+import { AuthProvider } from './components/auth/AuthContext'; // Import only AuthProvider
 import ProtectedRoute from './ProtectedRoute';
 import { ErrorBoundary } from 'react-error-boundary';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 
-/* Lazy load components for better performance, reducing initial bundle size.
-   This is particularly helpful for optimizing the loading experience. */
 const Dashboard = lazy(() => import('./Dashboard'));
 const SignUp = lazy(() => import('./components/auth/SignUpComponent'));
 const SignIn = lazy(() => import('./components/auth/SignIn'));
@@ -18,70 +20,67 @@ const RSSFeedWidget = lazy(() => import('./components/Widgets/RSSFeedWidget'));
 const Header = lazy(() => import('./components/Header'));
 const SideMenu = lazy(() => import('./components/SideMenu'));
 
-/* Fallback component for lazy loading.
-   Displays a loading indicator while the components are being loaded to improve user experience. */
+/**
+ * LoadingSpinner component provides visual feedback while components are being loaded.
+ * This ensures a better user experience during lazy loading of components.
+ *
+ * @returns {JSX.Element} - The loading spinner component
+ */
 const LoadingSpinner = () => (
-  <div className="loading-spinner">
-    <div className="spinner"></div>
-    <p>Loading...</p>
-  </div>
+  <Box
+    sx={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: '100vh',
+    }}
+  >
+    <CircularProgress />
+  </Box>
 );
 
-/* Error Fallback Component for handling runtime errors gracefully.
-   This improves resilience by providing the user with feedback and recovery options when an error occurs. */
+/**
+ * ErrorFallback component provides a user-friendly message when an error occurs.
+ * This helps improve user experience by giving context when something goes wrong.
+ *
+ * @param {object} props - Props passed to the error fallback component
+ * @returns {JSX.Element} - The error fallback UI
+ */
 const ErrorFallback = ({ error, resetErrorBoundary }) => (
-  <div role="alert" className="error-fallback">
-    <h2>Oops! Something went wrong.</h2>
-    <pre>{error.message}</pre>
-    <button onClick={resetErrorBoundary}>Try again</button>
-  </div>
+  <Box role="alert" sx={{ textAlign: 'center', padding: 4 }}>
+    <Typography variant="h4" color="error" gutterBottom>
+      Oops! Something went wrong.
+    </Typography>
+    <Typography variant="body1" gutterBottom>
+      {error.message}
+    </Typography>
+    <Button variant="contained" color="primary" onClick={resetErrorBoundary}>
+      Try again
+    </Button>
+  </Box>
 );
 
 function App() {
-  const { isLoggedIn } = useContext(AuthContext);
-
   return (
-    /* Wrap the entire application with AuthProvider to manage authentication state globally.
-       This ensures that authentication context is available throughout the app. */
-    <AuthProvider>
+    <AuthProvider> {/* Wrapping the entire app with AuthProvider */}
       <Router>
-        {/* ErrorBoundary wraps the application to catch any runtime errors.
-            If an error occurs, the user will see the ErrorFallback component.
-            onReset is configured to reload the window to attempt recovery from the error. */}
         <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => window.location.reload()}>
-          {/* Suspense is used to handle the lazy loading of components, providing a fallback UI (LoadingSpinner)
-              while the components are being loaded. This improves user experience by displaying a loading indicator. */}
           <Suspense fallback={<LoadingSpinner />}>
-            {/* Conditionally render Header and SideMenu based on authentication status */}
-            {isLoggedIn ? (
-              <>
-                <Header />
-                <SideMenu />
-              </>
-            ) : null}
-            {/* Define routes using <Routes> and <Route> components.
-                Routes handle the navigation within the application. */}
             <Routes>
-              {/* Route for the sign-up page. This allows new users to create an account. */}
               <Route path="/signup" element={<SignUp />} />
-              {/* Route for the sign-in page. This allows existing users to log in. */}
               <Route path="/signin" element={<SignIn />} />
-              {/* ProtectedRoute ensures that only authenticated users can access the dashboard and its widgets.
-                  The dashboard route contains nested routes for different widgets. */}
               <Route
-                path="/dashboard"
+                path="/dashboard/*"
                 element={
-                  isLoggedIn ? (
-                    <ProtectedRoute>
+                  <ProtectedRoute>
+                    <>
+                      <Header />
+                      <SideMenu />
                       <Dashboard />
-                    </ProtectedRoute>
-                  ) : (
-                    <Navigate to="/signin" />
-                  )
+                    </>
+                  </ProtectedRoute>
                 }
               >
-                {/* Nested routes for different widgets within the dashboard.
-                    These routes are protected, meaning the user must be authenticated to access them. */}
                 <Route path="weather" element={<WeatherWidget />} />
                 <Route path="calendar" element={<CalendarWidget />} />
                 <Route path="todo" element={<ToDoWidget />} />
@@ -89,17 +88,12 @@ function App() {
                 <Route path="news" element={<NewsWidget />} />
                 <Route path="rss-feed" element={<RSSFeedWidget />} />
               </Route>
-              {/* Default route to the dashboard, wrapped in ProtectedRoute to ensure authentication. */}
               <Route
                 path="/"
                 element={
-                  isLoggedIn ? (
-                    <ProtectedRoute>
-                      <Dashboard />
-                    </ProtectedRoute>
-                  ) : (
-                    <Navigate to="/signin" />
-                  )
+                  <ProtectedRoute>
+                    <Navigate to="/dashboard" />
+                  </ProtectedRoute>
                 }
               />
             </Routes>
