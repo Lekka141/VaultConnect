@@ -1,5 +1,5 @@
-const express = require('express');
-const connectDB = require('./config/db');
+const express = require('express'); // Import the Express framework
+const connectDB = require('./config/db'); // Import the database connection function
 const cors = require('cors');
 const { authMiddleware, limiter } = require('./middleware/AuthMiddleware'); // Ensure the path is correct
 require('dotenv').config(); // Load environment variables from .env
