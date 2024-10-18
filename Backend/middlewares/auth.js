@@ -13,6 +13,8 @@ const protect = async (req, res, next) => {
       res.status(401).json({ message: 'Not authorized, token failed' });
     }
   }
+
+   // If no token is provided, respond with a 401 status and an error message
   if (!token) {
     res.status(401).json({ message: 'Not authorized, no token' });
   }
