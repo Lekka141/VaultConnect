@@ -40,16 +40,16 @@ app.use('/api', limiter);
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
-/* Data sanitization against NoSQL query injection */
+// Data sanitization against NoSQL query injection
 app.use(mongoSanitize());
 
-/* Data sanitization against XSS */
+// Data sanitization against XSS
 app.use(xss());
 
-/* Prevent parameter pollution */
+// Prevent parameter pollution
 app.use(hpp({
   whitelist: [
-    /* Add any parameters that you want to allow duplicates for */
+    // Add any parameters that you want to allow duplicates for
     'widgetType'
   ]
 }));
