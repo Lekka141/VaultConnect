@@ -18,7 +18,6 @@ const FinancialNewsWidget = lazy(() => import('./components/Widgets/FinancialNew
 const NewsWidget = lazy(() => import('./components/Widgets/NewsWidget'));
 const RSSFeedWidget = lazy(() => import('./components/Widgets/RSSFeedWidget'));
 const Header = lazy(() => import('./components/Header'));
-const SideMenu = lazy(() => import('./components/SideMenu'));
 
 /**
  * LoadingSpinner component provides visual feedback while components are being loaded.
@@ -75,8 +74,7 @@ function App() {
                   <ProtectedRoute>
                     <>
                       <Header />
-                      <SideMenu />
-                      <Dashboard />
+                      <Dashboard /> {/* No SideMenu */}
                     </>
                   </ProtectedRoute>
                 }
