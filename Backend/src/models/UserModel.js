@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'); // use mongoose to store data
 
 const userSchema = new mongoose.Schema({
   name: {
