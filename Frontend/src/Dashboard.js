@@ -29,9 +29,9 @@ const ErrorFallback = ({ error, resetErrorBoundary }) => (
 
 function Dashboard() {
   const [activeWidgets, setActiveWidgets] = useState({
-    WeatherWidget: true,
-    CalendarWidget: true,
-    ToDoWidget: true,
+    WeatherWidget: false,
+    CalendarWidget: false,
+    ToDoWidget: false,
     FinancialNewsWidget: false,
     RSSFeedWidget: false,
     NewsWidget: false,
