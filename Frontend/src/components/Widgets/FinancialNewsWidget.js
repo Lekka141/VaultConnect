@@ -4,7 +4,7 @@ import axios from 'axios';
 
 /**
  * FinancialNewsWidget component displays the latest financial news headlines.
- * It fetches data from a financial news API.
+ * It fetches data from a financial news API through the backend.
  *
  * @returns {JSX.Element} - The rendered financial news widget
  */
@@ -21,10 +21,8 @@ const FinancialNewsWidget = () => {
         setLoading(true);
         setError('');
 
-        /** Fetch news data using an environment variable for the API key */
-        const response = await axios.get(
-          `https://newsapi.org/v2/top-headlines?category=business&apiKey=${process.env.REACT_APP_NEWS_API_KEY}`
-        );
+        /** Fetch news data from the backend API */
+        const response = await axios.get('/api/financial-news');
         setNews(response.data.articles);
       } catch (err) {
         setError('Failed to fetch news data. Please try again later.');
