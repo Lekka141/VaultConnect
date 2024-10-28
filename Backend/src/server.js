@@ -1,11 +1,15 @@
-const express = require('express'); // Import the Express framework
-const connectDB = require('./config/db'); // Import the database connection function
+require('dotenv').config(); // Ensure dotenv is loaded first
+const express = require('express');
+const mongoose = require('mongoose');
 const cors = require('cors');
-const { authMiddleware, limiter } = require('./middleware/AuthMiddleware'); // Ensure the path is correct
-require('dotenv').config(); // Load environment variables from .env
+const authRoutes = require('./routes/authRoutes'); // Adjust the path as necessary
+const newsRoutes = require('./routes/newsRoutes'); // Add news API route
+const weatherRoutes = require('./routes/weatherRoutes'); // Import weather routes
+const financialNewsRoutes = require('./routes/financialNewsRoutes'); // Import the new route
 
 // Initialize express app
 const app = express();
+const PORT = process.env.PORT || 5000;
 
 // Enable CORS with options
 app.use(cors({
@@ -13,58 +17,31 @@ app.use(cors({
     credentials: true, // If using cookies for authentication
 }));
 
+// Middleware
+app.use(express.json());
+
+// Function to connect to MongoDB
+async function connectDB() {
+    await mongoose.connect(process.env.MONGO_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    });
+    console.log('MongoDB connected');
+}
+
 // Connect to MongoDB
 connectDB().catch(err => {
     console.error('Failed to connect to MongoDB:', err.message);
     process.exit(1); // Exit the application if the DB connection fails
 });
 
-// Middleware to parse incoming JSON data
-app.use(express.json()); // This allows your API to accept and parse JSON data
-
-// Apply rate limiting to all API routes
-app.use('/api', limiter); // Ensure limiter is defined before this line
-
 // Routes
-const userRoutes = require('./routes/userRoutes'); // Ensure correct path and export
-const fileRoutes = require('./routes/fileRoutes'); // Ensure correct path and export
-const calendarRoutes = require('./routes/calendarRoutes'); // Ensure correct path and export
-const widgetRoutes = require('./routes/widgetsRoutes'); // Ensure correct path and export
+app.use('/api', authRoutes); // Use auth routes
+app.use('/api', newsRoutes); // Use news routes
+app.use('/api', weatherRoutes); // Use weather routes
+app.use('/api', financialNewsRoutes); // Add the financial news route
 
-// Apply authMiddleware to protected routes
-app.use('/api/users', authMiddleware, userRoutes);
-app.use('/api/files', authMiddleware, fileRoutes);
-app.use('/api/calendar', authMiddleware, calendarRoutes);
-app.use('/api/widgets', authMiddleware, widgetRoutes);
-
-// Root route - simple message to indicate the API is running
-app.get('/', (req, res) => {
-    res.send('API is running...');
-});
-
-// Health check route for monitoring server health status
-app.get('/health', (req, res) => {
-    res.status(200).send('Server is healthy');
-});
-
-// Fallback for handling undefined routes
-app.use((req, res, next) => {
-    res.status(404).json({ message: 'Route not found' });
-});
-
-// Global error handling middleware
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({
-        message: 'Internal Server Error',
-        error: err.message,
-    });
-});
-
-// Define the PORT from the .env file, or fallback to 5000
-const PORT = process.env.PORT || 5000;
-
-// Start the server
+// Start server
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
