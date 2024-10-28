@@ -65,6 +65,28 @@ const WidgetSelector = () => {
   };
 
   /**
+   * Function to select all widgets.
+   */
+  const handleSelectAll = () => {
+    const allSelected = Object.keys(selectedWidgets).reduce((acc, key) => {
+      acc[key] = true;
+      return acc;
+    }, {});
+    setSelectedWidgets(allSelected);
+  };
+
+  /**
+   * Function to cancel all widget selections.
+   */
+  const handleCancelAll = () => {
+    const allDeselected = Object.keys(selectedWidgets).reduce((acc, key) => {
+      acc[key] = false;
+      return acc;
+    }, {});
+    setSelectedWidgets(allDeselected);
+  };
+
+  /**
    * Helper function to render checkboxes for each widget dynamically.
    * @returns {JSX.Element[]} - Array of FormControlLabel components with checkboxes.
    */
@@ -103,14 +125,6 @@ const WidgetSelector = () => {
     );
   }, [selectedWidgets, widgetsList]);
 
-  /**
-   * Handles Apply Selection button click to save the selected widgets.
-   */
-  const handleApplySelection = () => {
-    localStorage.setItem('selectedWidgets', JSON.stringify(selectedWidgets)); /** Persist the selected widgets state in localStorage */
-    console.log('Selected widgets saved:', selectedWidgets); /** Logs selected widgets for development purposes */
-  };
-
   return (
     <Box>
       <Card sx={{ marginBottom: 3 }}>
@@ -120,14 +134,14 @@ const WidgetSelector = () => {
           </Typography>
           {/** Render checkboxes dynamically */}
           {renderCheckboxes()}
-          <Button
-            variant="contained"
-            color="primary"
-            sx={{ marginTop: 2 }}
-            onClick={handleApplySelection} /** Calls handleApplySelection function to apply selected widgets */
-          >
-            Apply Selection
-          </Button>
+          <Box sx={{ marginTop: 2 }}>
+            <Button variant="contained" color="primary" onClick={handleSelectAll}>
+              Select All
+            </Button>
+            <Button variant="contained" color="secondary" onClick={handleCancelAll} sx={{ marginLeft: 1 }}>
+              Cancel All
+            </Button>
+          </Box>
         </CardContent>
       </Card>
 
