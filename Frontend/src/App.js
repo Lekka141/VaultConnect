@@ -19,6 +19,11 @@ const NewsWidget = lazy(() => import('./components/Widgets/NewsWidget'));
 const RSSFeedWidget = lazy(() => import('./components/Widgets/RSSFeedWidget'));
 const Header = lazy(() => import('./components/Header'));
 
+// New lazy-loaded components
+const AboutUs = lazy(() => import('./components/AboutUs'));
+const Features = lazy(() => import('./components/Features'));
+const Contact = lazy(() => import('./components/Contact'));
+
 /**
  * LoadingSpinner component provides visual feedback while components are being loaded.
  * This ensures a better user experience during lazy loading of components.
@@ -68,6 +73,9 @@ function App() {
             <Routes>
               <Route path="/signup" element={<SignUp />} />
               <Route path="/signin" element={<SignIn />} />
+              <Route path="/about-us" element={<AboutUs />} /> {/* Add route for AboutUs */}
+              <Route path="/Features" element={<Features />} /> {/* Add route for Features */}
+              <Route path="/Contact" element={<Contact />} /> {/* Add route for Contact */}
               <Route
                 path="/dashboard/*"
                 element={

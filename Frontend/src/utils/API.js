@@ -1,22 +1,19 @@
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // To handle navigation in React
 
 /** Create an Axios instance with a base URL and a timeout */
 const API = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000',
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000', // Ensure REACT_APP_API_URL is set
   timeout: 20000, /** 20 seconds timeout for all requests */
 });
 
 /**
  * Add request interceptor to include authorization token.
  * This ensures that all outgoing requests contain the user's auth token if available.
- *
- * Request interceptors are commonly used for:
- * - Adding authentication headers to requests.
- * - Modifying request configurations before they are sent.
  */
 API.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('authToken'); // Make sure token is correctly stored in localStorage
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`; /** Include Bearer token in request headers */
     }
@@ -39,15 +36,20 @@ API.interceptors.request.use(
 API.interceptors.response.use(
   (response) => response,
   (error) => {
+    const navigate = useNavigate(); // Add navigate function for routing
+
     if (error.response) {
       switch (error.response.status) {
         case 401:
           console.warn('Authentication expired. Redirecting to sign-in.'); /** Warn user about expired session */
           localStorage.removeItem('authToken'); /** Remove token to clear session */
-          window.location.href = '/signin'; /** Redirect to sign-in if unauthorized */
+          navigate('/signin'); /** Use navigate for React Router-based navigation */
           break;
         case 403:
           console.error('Access denied. You do not have permission to access this resource.');
+          break;
+        case 404:
+          console.error('Resource not found (404).');
           break;
         case 500:
           console.error('Internal server error. Please try again later.');
@@ -74,7 +76,7 @@ API.interceptors.response.use(
  */
 export const login = async (email, password) => {
   try {
-    const response = await API.post('/login', { email, password });
+    const response = await API.post('/signin', { email, password });
     if (response.data.token) {
       localStorage.setItem('authToken', response.data.token); /** Save token for future requests */
     }
